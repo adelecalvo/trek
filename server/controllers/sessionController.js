@@ -3,23 +3,28 @@ const jwt = require('jsonwebtoken');
 const sessionController = {};
 
 sessionController.startSession = (req, res, next) => {
-  const jwtPayload = { username: req.body.username };
-  const jwtValue = jwt.sign(jwtPayload, 'JWT_SECRET_KEY', { expiresIn: 30000 });
-  res.cookie('ssid', jwtValue, { httpOnly: true });
-  req.locals = { jwt: jwtValue };
+  // grab user name on request
+  // turn it into a jwt and store on cookie
+  // 1. create token (key + secret + expiration)
+  // 2. set cookie and store jwt secret / token
+  const { username } = req.body;
+  const token = jwt.sign(
+    {
+      // session expires in an hour
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      data: username,
+    },
+    'secret',
+  );
 
+  res.cookie('ssid', token, { httpOnly: true });
+  req.locals = { jwt: token };
   next();
 };
 
 sessionController.isLoggedIn = async (req, res, next) => {
-  const { ssid } = req.cookies;
-  if (!ssid) return null;
-  try {
-    jwt.verify(ssid, 'JWT_SECRET_KEY');
-    next();
-  } catch (err) {
-    res.redirect('http://localhost:3000/');
-  }
+  req;
+  // jwt.verify(token, 'secret');
 };
 
 module.exports = sessionController;

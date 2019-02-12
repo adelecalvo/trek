@@ -38,8 +38,7 @@ client
   .catch(e => console.error(e.stack));
 
 userModel.verify = async (req) => {
-  const { username, password, email } = req.body;
-  console.log(req.body, 'in sign in');
+  const { username, password } = req.body;
   return client
     .query(`SELECT * FROM users WHERE username = '${username}'`)
     .then((res) => {

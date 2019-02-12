@@ -5,8 +5,7 @@ const userController = {};
 userController.verify = async (req, res, next) => {
   const result = await User.verify(req);
   if (!result) return res.status(401).json({ error: 'ERROR' });
-
-  return next();
+  next();
 };
 
 userController.signup = async (req, res, next) => {
